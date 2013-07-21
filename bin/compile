@@ -213,6 +213,9 @@ if (grep -Fiq "hg+" requirements.txt) then
   bpwatch stop mercurial_install
 fi
 
+#install Node.js
+$BIN_DIR/compilenodejs "$BUILD_DIR" "$CACHE_DIR"
+
 # Install dependencies with Pip.
 puts-step "Installing dependencies using Pip ($PIP_VERSION)"
 
