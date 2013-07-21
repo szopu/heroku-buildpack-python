@@ -74,7 +74,12 @@ function resolve_version() {
 }
 
 function package_engine_version() {
-  version=$(cat $BUILD_DIR/package.json | $bootstrap_node/bin/node $LP_DIR/vendor/json/json engines.$1 2>/dev/null)
+  if [ -f $BUILD_DIR/package.json ]; then
+    dump_package_json="cat $BUILD_DIR/package.json"
+  else
+    dump_package_json='echo "{}"'
+  fi
+  version=$($dump_package_json | $bootstrap_node/bin/node $LP_DIR/vendor/json/json engines.$1 2>/dev/null)
   if [ $? == 0 ]; then
     echo $version | sed -e 's/\([<>=]\) /\1/g'
   fi
