@@ -228,9 +228,17 @@ puts-step "Installing dependencies using Pip ($PIP_VERSION)"
 [ ! "$FRESH_PYTHON" ] && bpwatch stop pip_install
 [ "$FRESH_PYTHON" ] && bpwatch stop pip_install_first
 
+if [ -f ".heroku-buildpack-python-nodejs/env_whitelist" ]; then
+  puts-step "Environment variables whitelist file found"
+  ENV_WHITELIST="^($(cat .heroku-buildpack-python-nodejs/env_whitelist | tr '\n' '|' | sed 's/|$//'))\$"
+else
+  ENV_WHITELIST=""
+fi
+puts-step "ENV_WHITELIST is $ENV_WHITELIST"
+
 # Django collectstatic support.
 bpwatch start collectstatic
-  sub-env $BIN_DIR/steps/collectstatic
+  sub-env $BIN_DIR/steps/collectstatic "$ENV_WHITELIST"
 bpwatch stop collectstatic
 
 # ### Finalize
